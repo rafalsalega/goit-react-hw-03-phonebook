@@ -14,7 +14,7 @@ export class App extends Component {
 
   handleChange = e => {
     const { name, value } = e.target;
-    this.setState({ [name]: value }); 
+    this.setState({ [name]: value });
   };
 
   handleSubmit = e => {
@@ -28,6 +28,10 @@ export class App extends Component {
       alert(`${this.state.name} is already in contacts`);
       return;
     }
+    localStorage.setItem(
+      'contacts',
+      JSON.stringify([...this.state.contacts, newContact])
+    );
     this.setState({ contacts: [...this.state.contacts, newContact] });
     e.target.reset();
   };
@@ -36,8 +40,16 @@ export class App extends Component {
     const filteredContacts = this.state.contacts.filter(
       contact => contact.id !== id
     );
+    localStorage.setItem('contacts', JSON.stringify(filteredContacts));
     this.setState({ contacts: filteredContacts });
   };
+
+  componentDidMount() {
+    const contacts = JSON.parse(localStorage.getItem('contacts'));
+    if (contacts) {
+      this.setState({ contacts });
+    }
+  }
 
   render() {
     const { contacts } = this.state;
@@ -55,7 +67,7 @@ export class App extends Component {
           contacts={contacts}
           filter={this.state.filter}
           onClick={this.handleDelete}
-        />        
+        />
       </>
     );
   }
